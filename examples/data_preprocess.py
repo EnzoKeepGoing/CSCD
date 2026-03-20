@@ -2,10 +2,9 @@ import os, sys
 import argparse
 
 from pycd.preprocess import data_proprocess, process_raw_data
-
 from pycd.preprocess.split_datasets import main as split_dataset
 
-# 数据集路径配置
+# Dataset path configuration
 dname2paths = {
     "assist2009": "../data/assist2009/skill_builder_data_corrected_collapsed.csv",
     "math1": "../data/math1/math1.txt",
@@ -24,24 +23,60 @@ dname2paths = {
     "jiuzhang_g7": "../data/jiuzhang_g7/grade_7_data.csv"
 }
 
-# 配置文件路径
+# Configuration file path
 configf = "../configs/data_config.json"
 
 if __name__ == "__main__":
 
-    # 命令行参数设置
+    # Command-line arguments
     
-    parser = argparse.ArgumentParser(description='教育数据处理工具 - 从原始CSV到标准数据集')
-    parser.add_argument('--dataset_name', type=str, required=True, help='数据集名称')
-    parser.add_argument('--min_seq_len', type=int, default=15, help='最小序列长度 (默认为15)')
-    parser.add_argument('--split_mode', type=int,  default=1, help='题目多次回答处理策略,1保留第1次交互,2取学生在题目上多次的平均acc,3平均acc+所有学生在该题的acc')
-    parser.add_argument('--time_info', type=int, default=0, help='是否考虑时间信息, 不考虑0, 考虑(1,2,4 week)')
-    parser.add_argument('--test_ratio', type=float, default=0.2, help='测试集比例')
-    parser.add_argument('--n_folds', type=int, default=5, help='交叉验证折数')
-    parser.add_argument('--seed', type=int, default=42, help='随机种子')
+    parser = argparse.ArgumentParser(
+        description='Educational Data Processing Tool - From Raw CSV to Standardized Dataset'
+    )
+    parser.add_argument('--dataset_name', type=str, required=True, help='Dataset name')
+    parser.add_argument('--min_seq_len', type=int, default=15, help='Minimum sequence length (default: 15)')
+    parser.add_argument(
+        '--split_mode',
+        type=int,
+        default=1,
+        help='Strategy for handling multiple attempts on the same question: '
+             '1 = keep first attempt; '
+             '2 = average accuracy per student-question; '
+             '3 = average accuracy + global question accuracy'
+    )
+    parser.add_argument(
+        '--time_info',
+        type=int,
+        default=0,
+        help='Whether to include temporal information: '
+             '0 = no; '
+             '1/2/4 = time windows (week-based)'
+    )
+    parser.add_argument('--test_ratio', type=float, default=0.2, help='Test set ratio')
+    parser.add_argument('--n_folds', type=int, default=5, help='Number of folds for cross-validation')
+    parser.add_argument('--seed', type=int, default=42, help='Random seed')
+    
     args = parser.parse_args()
     print(args)
 
-    dname, writef = process_raw_data(args.dataset_name, dname2paths, args.split_mode, args.time_info, args.test_ratio, args.min_seq_len)
+    dname, writef = process_raw_data(
+        args.dataset_name,
+        dname2paths,
+        args.split_mode,
+        args.time_info,
+        args.test_ratio,
+        args.min_seq_len
+    )
     
-    split_dataset(dname, writef, args.dataset_name, configf, args.min_seq_len, args.split_mode, args.time_info, args.test_ratio, args.n_folds, args.seed)
+    split_dataset(
+        dname,
+        writef,
+        args.dataset_name,
+        configf,
+        args.min_seq_len,
+        args.split_mode,
+        args.time_info,
+        args.test_ratio,
+        args.n_folds,
+        args.seed
+    )
