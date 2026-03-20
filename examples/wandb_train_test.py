@@ -38,16 +38,6 @@ class InjectADataset(Dataset):
         a_vector = self.A[exer_id]
         return stu_id, exer_id, q_vector, a_vector, label
 def process_common_args(args_or_dict, model_name=None):
-    """
-    处理通用参数，填充默认值，可以处理字典或Namespace对象
-    
-    参数:
-        args_or_dict: 命令行参数对象或字典
-        model_name: 模型名称，用于设置默认保存目录
-        
-    返回:
-        处理后的参数字典
-    """
     if not isinstance(args_or_dict, dict):
         args_dict = vars(args_or_dict)
     else:
@@ -122,7 +112,7 @@ def main(params):
     concept_count = q_matrix.shape[1]
 
     a_dim = int(params.get("a_dim", 0))
-    params["a_dim"] = a_dim  # 确保 create_model 能读到
+    params["a_dim"] = a_dim 
     
     if a_dim > 0:
         a_csv_path = os.path.join(data_dir, params.get("a_csv_name", "A_matrix.csv"))
@@ -197,14 +187,11 @@ def main(params):
                 args = Namespace(**params)
                 model, model_params, optimizer = create_model(args, concept_count, len(question2idx), user_count)
                 
-                # 创建实验目录并保存配置
                 exp_dir = get_experiment_dir(params['save_dir'], params['model_name'], params['dataset'], params=model_params, seed=params['seed'])
                 save_experiment_config(exp_dir, params['model_name'], params['dataset'], model_params)
                 
-                # 设置模型保存路径
                 ckpt_path = os.path.join(exp_dir, 'model.pth')
 
-                #返回的是测试集的结果，验证集只打印不返回
                 test_auc, test_accuracy, test_rmse, test_f1, test_doa, _, best_metric, best_epoch = model.train(params['np_train'], params['np_val'], 
                                                                                                                         params['np_test'], q=params['q'], 
                                                                                                                         batch_size=params['batch_size'], 
@@ -229,12 +216,10 @@ def main(params):
 
                 args = Namespace(**params)
                 model, model_params, optimizer = create_model(args, concept_count, len(question2idx), user_count)
-                
-                # 创建实验目录并保存配置
+            
                 exp_dir = get_experiment_dir(params['save_dir'], params['model_name'], params['dataset'], params=model_params, seed=params['seed'])
                 save_experiment_config(exp_dir, params['model_name'], params['dataset'], model_params)
                 
-                # 设置模型保存路径
                 ckpt_path = os.path.join(exp_dir, 'model.pth')
                 
                 test_auc, test_accuracy, test_f1, _, best_metric, best_epoch = model.train(epochs=params['interaction_epochs'], nn_epochs=params['parameter_epochs'], 
@@ -251,7 +236,6 @@ def main(params):
             return results
         
         elif params['model_name'] == 'hypercdm':
-            print(" Hypercdm，构建超图结构...")
             from pycd.models.hypercdm import HyperCDM, extract_response_logs, build_r_matrix
             train_ds = CDMDataset(train_valid_csv, question2idx, q_matrix, fold_mode='train', fold=fold)
             valid_ds = CDMDataset(train_valid_csv, question2idx, q_matrix, fold_mode='valid', fold=fold)
@@ -263,7 +247,6 @@ def main(params):
             params['user_n'] = user_count
             params['exer_n'] = len(question2idx)
             params['knowledge_n'] = concept_count
-            print(" Disengcd，构建meta multigraph结构...")
             train_ds = CDMDataset(train_valid_csv, question2idx, q_matrix, fold_mode='train', fold=fold)
             valid_ds = CDMDataset(train_valid_csv, question2idx, q_matrix, fold_mode='valid', fold=fold)
             test_ds = CDMDataset(test_csv, question2idx, q_matrix, is_test=True)
@@ -321,9 +304,9 @@ def main(params):
     train_ds, 
     batch_size=params['batch_size'], 
     shuffle=True,
-    num_workers=18,           # 建议：CPU 核心数的一半
+    num_workers=18,          
     pin_memory=True,
-    persistent_workers=True, # Windows 则设 False
+    persistent_workers=True, # Windows False
     prefetch_factor=4
 )
 
@@ -390,7 +373,6 @@ def main(params):
         print(f"record hyperparams to wandb: {', '.join(hyperparams.keys())}")
 
     if params['model_name'] == 'disengcd':
-        # DisenGCD模型不使用scheduler
         scheduler = None
     else:
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -403,7 +385,6 @@ def main(params):
     save_dir = params['save_dir']
     os.makedirs(save_dir, exist_ok=True)
 
-    # 创建实验目录并保存配置
     exp_dir = get_experiment_dir(
         save_dir,
         model_name,
@@ -413,26 +394,22 @@ def main(params):
     )
     save_experiment_config(exp_dir, model_name, dataset_name, model_params)
     
-    # 设置模型保存路径
     ckpt_path = os.path.join(exp_dir, 'model.pth')
     print(f"Model save to: {ckpt_path}")
     
-    # 判断是否为DisenGCD模型
     if params['model_name'] == 'disengcd':
-        # 使用专门为DisenGCD设计的训练器
         from pycd.train.trainer import Trainer4DisenGCD
         trainer = WandbTrainer(
             model=model,
-            optimizer=optimizer,  # 这里传入的是优化器列表
-            scheduler=None,       # DisenGCD模型不使用scheduler
+            optimizer=optimizer,  
+            scheduler=None,       
             device=params['device'],
             early_stop=early_stop,
             ckpt_path=ckpt_path,
             wandb_instance=wandb,
-            trainer_class=Trainer4DisenGCD  # 使用专门的训练器类
+            trainer_class=Trainer4DisenGCD  
         )
     else:
-        # 其他模型使用普通的Trainer
         trainer = WandbTrainer(
             model=model,
             optimizer=optimizer,
@@ -444,7 +421,6 @@ def main(params):
         )
 
     # print("====== Eval before training ======")
-    # # 👇 打印 ACC 和 RMSE
     # trues, preds = [], []
     # for batch in test_loader:
     #     batch = [x.to(trainer.device) for x in batch]
@@ -489,7 +465,6 @@ def main(params):
     # )
 
 
-    # 确保模型文件被保存
     if not os.path.exists(ckpt_path):
         # print(f"Warning: Model file not found at {ckpt_path}, saving current model...")
         torch.save(model.state_dict(), ckpt_path)
@@ -504,7 +479,6 @@ def main(params):
 
     print(f"Fold {fold} Test AUC: {test_auc:.4f}, Test Accuracy: {test_acc:.4f}, Test RMSE: {test_rmse:.4f}, Test DOA: {test_doa:.4f}")
 
-    # 保存测试集预测结果
     save_test_predictions(test_loader, model, exp_dir, params['device'])
 
     final_results = {
@@ -518,9 +492,7 @@ def main(params):
     }
 
     if wandb:
-        # 训练结束后，确保模型文件仍然存在
         if not os.path.exists(ckpt_path):
-            # 重新保存模型
             torch.save(model.state_dict(), ckpt_path)
             print(f"Model saved to: {ckpt_path}")
             
@@ -530,7 +502,6 @@ def main(params):
         else:
             print(f"error: cannot save model file")
                 
-        # 然后上传
         log_metrics(wandb, {
             'test_auc': test_auc,
             'test_acc': test_acc,
@@ -539,7 +510,6 @@ def main(params):
         })
         # log_model(wandb, ckpt_path, aliases=["best"])
 
-    # 清理实验目录，只保留必要文件
     cleanup_experiment_dir(exp_dir)
 
     if wandb:
@@ -548,16 +518,13 @@ def main(params):
     return final_results
 
 def standardization(wandb, exp_dir, model_params, params, auc_, accuracy_, ckpt_path, best_metric, best_epoch, rmse_=None, f1_=None, doa_=None):
-    # 对train和eval难以实现的，在model.py实现训练流程，返回结果，通过这个函数格式化对齐
-    # 加入wandb
     fold = params['fold']
     if wandb:
         from wandb_utils import collect_hyperparams
         hyperparams = collect_hyperparams(params, model_params)
         wandb.config.update(hyperparams)
-        print(f"记录超参数到wandb: {', '.join(hyperparams.keys())}")
+        print(f"wandb: {', '.join(hyperparams.keys())}")
 
-    # 测试集评估
     print(f"Evaluating fold {fold} on test set...")
 
     if params['model_name'] =='scd':
@@ -566,7 +533,6 @@ def standardization(wandb, exp_dir, model_params, params, auc_, accuracy_, ckpt_
     if params['model_name'] =='icdm':
         print(f"Fold {fold} Test AUC: {auc_:.4f}, Test Accuracy: {accuracy_:.4f}, Test RMSE: {rmse_:.4f}, Test F1: {f1_:.4f}, Test Doa: {doa_:.4f}")
     
-    # 保存实验结果
     results = {
         'fold': fold,
         'test_auc': auc_,
@@ -580,9 +546,8 @@ def standardization(wandb, exp_dir, model_params, params, auc_, accuracy_, ckpt_
     }
 
     if wandb:
-        # 训练结束后，确保模型文件仍然存在
         if not os.path.exists(ckpt_path):
-            print(f"error: cannot save model file") #保存失败
+            print(f"error: cannot save model file") 
             return None
         else:
             file_size = os.path.getsize(ckpt_path)
@@ -596,9 +561,8 @@ def standardization(wandb, exp_dir, model_params, params, auc_, accuracy_, ckpt_
             'test_doa': doa_,
             'ckpt_path': ckpt_path
         })
-        # log_model(wandb, ckpt_path, aliases=["best"]) 不需要上传模型文件
+        # log_model(wandb, ckpt_path, aliases=["best"])
 
-    # 清理实验目录，只保留必要文件
     cleanup_experiment_dir(exp_dir)
     
     if wandb:
