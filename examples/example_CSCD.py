@@ -2,8 +2,8 @@ import argparse
 from wandb_train_test import main
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Train KSCD model')
-    parser.add_argument('--model_name', type=str, default='kscd')
+    parser = argparse.ArgumentParser(description='Train CSCD model')
+    parser.add_argument('--model_name', type=str, default='CSCD')
     # Dataset parameters
     parser.add_argument('--dataset', type=str, default='peiyou')
     
