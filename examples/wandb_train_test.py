@@ -125,7 +125,7 @@ def main(params):
         A = None
     params["q_matrix"]=q_matrix
     params["eval_logs"]=test_csv
-
+a
     df_train_valid = pd.read_csv(train_valid_csv)
     user_count = int(df_train_valid['user_id'].max()) + 1
 
@@ -258,7 +258,7 @@ def main(params):
                 construct_stu_ques_graph(params["dataset"],base_dir)
                 disengcd_get_file(params["dataset"],base_dir)
             else:
-                print(f"警告: 找不到文件 {data_txt_path}，跳过图构建步骤")
+                print(f"Warning: File {data_txt_path} not found, skipping graph construction step")
 
             with open(os.path.join(data_dir,'graph/edges.pkl'), "rb") as f: 
                 edges = pickle.load(f) 
@@ -277,7 +277,6 @@ def main(params):
                 adjs_pt.append(torch.sparse.FloatTensor(size=edges[0].shape).to(params['device']))
 
             node_types = np.zeros((params["knowledge_n"]+params["exer_n"]+params["user_n"],), dtype=np.int32)
-            print(node_types.shape)
             a = np.arange(params["knowledge_n"])                                                      
             b = np.arange(params["knowledge_n"],params["knowledge_n"]+params["exer_n"])                                                   
             c = np.arange(params["knowledge_n"]+params["exer_n"],params["user_n"] + params["exer_n"]+params["user_n"])
@@ -294,7 +293,7 @@ def main(params):
             test_ds = CDMDataset(test_csv, question2idx, q_matrix, is_test=True)
 
         else:
-            print(f"警告: 未实现模型 {params['model_name']} 的数据集处理，使用默认CDMDataset")
+            print(f"Warning: Dataset processing for model {params['model_name']} is not implemented, using default CDMDataset")
             train_ds = CDMDataset(train_valid_csv, question2idx, q_matrix, fold_mode='train', fold=fold)
             valid_ds = CDMDataset(train_valid_csv, question2idx, q_matrix, fold_mode='valid', fold=fold)
             test_ds = CDMDataset(test_csv, question2idx, q_matrix, is_test=True)
