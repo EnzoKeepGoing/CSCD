@@ -149,7 +149,7 @@ For example, to create a sweep for the KaNCD model, simply modify the `MODEL_NAM
 
 # CSCD Model Training Parameters for 5 Folds
 
-This document outlines the parameters used for training the KSCD model across 5 different folds.
+This document outlines the parameters used for training the CSCD model across 5 different folds.
 
 ## Model Training Parameters Table
 
