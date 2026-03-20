@@ -1,0 +1,109 @@
+{
+    "assist2017": {
+        "data_path": "../data/assist2017",
+        "num_users": 1702,
+        "num_questions": 3162,
+        "num_concepts": 102,
+        "num_interactions": 390281,
+        "train_valid_file": "train_valid.csv",
+        "test_file": "test.csv",
+        "q_matrix_file": "q_matrix.csv",
+        "id_mapping_file": "id_mapping.json",
+        "que_kc_file": "que_kc_lookup.txt",
+        "min_seq_len": 15,
+        "split_mode": 1,
+        "time_info": 0,
+        "folds": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]
+    },
+    "assist2009": {
+        "data_path": "../data/assist2009",
+        "num_users": 2493,
+        "num_questions": 17676,
+        "num_concepts": 123,
+        "num_interactions": 267423,
+        "train_valid_file": "train_valid.csv",
+        "test_file": "test.csv",
+        "q_matrix_file": "q_matrix.csv",
+        "id_mapping_file": "id_mapping.json",
+        "que_kc_file": "que_kc_lookup.txt",
+        "min_seq_len": 15,
+        "split_mode": 1,
+        "time_info": 0,
+        "folds": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]
+    },
+    "jiuzhang_g3": {
+        "data_path": "../data/jiuzhang_g3",
+        "num_users": 534,
+        "num_questions": 8027,
+        "num_concepts": 844,
+        "num_interactions": 24866,
+        "train_valid_file": "train_valid.csv",
+        "test_file": "test.csv",
+        "q_matrix_file": "q_matrix.csv",
+        "id_mapping_file": "id_mapping.json",
+        "min_seq_len": 15,
+        "split_mode": 1,
+        "time_info": 0,
+        "folds": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]
+    },
+    "jiuzhang": {
+        "data_path": "../data/jiuzhang_g3",
+        "num_users": 591,
+        "num_questions": 8027,
+        "num_concepts": 844,
+        "num_interactions": 24866,
+        "train_valid_file": "train_valid.csv",
+        "test_file": "test.csv",
+        "q_matrix_file": "q_matrix.csv",
+        "id_mapping_file": "id_mapping.json",
+        "min_seq_len": 15,
+        "split_mode": 1,
+        "time_info": 4,
+        "folds": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]
+    },
+    "jiuzhang_g4_g5": {
+        "data_path": "../data/jiuzhang_g4_g5",
+        "num_users": 962,
+        "num_questions": 20460,
+        "num_concepts": 1483,
+        "num_interactions": 50936,
+        "train_valid_file": "train_valid.csv",
+        "test_file": "test.csv",
+        "q_matrix_file": "q_matrix.csv",
+        "id_mapping_file": "id_mapping.json",
+        "min_seq_len": 15,
+        "split_mode": 1,
+        "time_info": 0,
+        "folds": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]
+    }
+}

@@ -1,0 +1,21 @@
+# kscd.yaml
+program: example_kscd.py
+method: bayes
+metric:
+  goal: maximize
+  name: valid_metric
+parameters:
+  model_name:
+    values: ["kscd"]
+  dataset:
+    values: ["xes"]
+  emb_dim:
+    values: [10, 15, 20, 30, 40]
+  lr:
+    values: [5e-3]
+  batch_size:
+    values: [64]
+  fold:
+    values: [0, 1, 2, 3, 4]
+  seed:
+    values: [42, 3407]

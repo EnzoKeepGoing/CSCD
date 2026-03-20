@@ -1,0 +1,41 @@
+PYCD/
+├── examples/ 
+│   │   ├── model_save   #模型保存
+│   ├── data_preprocess.py #数据集处理入口
+│   ├── example_neuralcdm.py
+│   ├── example_kancd.py
+│   ├── example_rcd.py
+├── data/                #数据处理
+│   │   ├── dataset.py   #Dataloader
+│   │   ├── graph_utils.py  #RCD中建图相关方法
+│   │   ├── utils.py        #RCD中将train/vaild/test.csv转换为train/vaild/test.json的方法
+│   │   ├── assist2009/
+│   │   │   ├── train.csv, test.csv, q_matrix.txt, ...
+│   │   ├── math1/
+│   │   │   ├── train.csv, test.csv, q_matrix.txt, ...
+│   │   └── math2/
+│   │       ├── train.csv, test.csv, q_matrix.txt, ...
+├── pycd/
+│   ├── __init__.py
+│   ├── configs/
+│   │   ├── __init__.py
+│   ├── models/
+│   │   ├── base.py
+│   │   ├── neuralcdm.py                    # 已实现的 NeuralCDM 模型
+│   │   ├── rcd.py           # 占位模型，待扩展
+│   │   └── ...
+│   ├── train/
+│   │   └── trainer.py
+│   ├── evaluate/
+│   │   └── metrics.py
+│   ├── utils/
+│   │   ├── logging.py
+│   │   └── config.py
+│   ├── preprocess/
+│   │   ├── assist2009_preprocess.py
+│   │   ├── math1_preprocess.py
+│   │   └── ...
+├── setup.py
+└── configs/
+    ├── __init__.py
+    └── data_config.json

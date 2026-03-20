@@ -1,0 +1,7 @@
+torch>=1.7.0
+numpy
+pandas
+tqdm
+scikit-learn
+PyYAML
+EduCDM
