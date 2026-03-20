@@ -4,9 +4,6 @@ import torch.nn.functional as F
 import math
 from .base import BaseCDModel
 
-# ==========================================
-# 1. KAN Projection Operator (High-Order Projector)
-# ==========================================
 class KANProjector(nn.Module):
     """
     KAN projection head: maps input features into a high-order interaction space.
