@@ -13,7 +13,6 @@ def main(args):
     gpu_ids = args.gpu_ids.split(",")
     project_name = args.project_name if args.project_name else "pycd-experiments"
     
-    # 加载wandb配置
     WANDB_API_KEY = os.getenv("WANDB_API_KEY")
     if not WANDB_API_KEY:
         try:
@@ -22,23 +21,18 @@ def main(args):
                 WANDB_API_KEY = wandb_config["api_key"]
         except Exception as e:
             print(f"Error loading wandb config: {e}")
-            WANDB_API_KEY = "YOUR_API_KEY"  # 使用你的API密钥作为默认值
+            WANDB_API_KEY = "YOUR_API_KEY"  
     
     print(f"Using WANDB_API_KEY: {WANDB_API_KEY}")
     
-    # 读取日志文件解析sweep ID
     sweep_info = []
     try:
         with open(log_file, "r") as fin:
             lines = fin.readlines()
             for i, line in enumerate(lines):
                 if "wandb: Creating sweep from:" in line:
-                    # 提取文件路径
                     sweep_file = line.strip().split(":")[-1].strip()
-                    # 获取文件名，不含路径
                     sweep_file_name = os.path.basename(sweep_file).split(".")[0]
-                    
-                    # 查找对应的sweep ID
                     for j in range(i, min(i+5, len(lines))):
                         if "wandb: Run sweep agent with:" in lines[j]:
                             sweep_id = lines[j].strip().split(":")[-1].strip()
@@ -50,7 +44,6 @@ def main(args):
     
     print(f"Found {len(sweep_info)} sweeps in log file")
     
-    # 过滤并生成命令
     filtered_sweeps = []
     for idx, (file_name, sweep_id) in enumerate(sweep_info):
         if dataset_name in file_name and model_name in file_name:
@@ -58,7 +51,6 @@ def main(args):
     
     print(f"Filtered to {len(filtered_sweeps)} sweeps matching dataset={dataset_name} and model={model_name}")
     
-    # 写入脚本
     with open(output_script, "w") as fout:
         fout.write("#!/bin/bash\n")
         for i, (idx, file_name, sweep_id) in enumerate(filtered_sweeps):
@@ -68,7 +60,6 @@ def main(args):
                 fout.write(cmd)
                 print(f"Added sweep command: {cmd.strip()}")
     
-    # 添加执行权限
     os.chmod(output_script, 0o755)
     print(f"Generated sweep agent script: {output_script}")
 
