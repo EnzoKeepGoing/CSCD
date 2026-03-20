@@ -28,7 +28,7 @@ Dataset download link 🔗:
 
 ```bash
 cd examples
-python data_preprocess.py --dataset_name=assist2009 --min_seq_len=15 --split_mode=1 --time_info=0
+python data_preprocess.py --dataset_name=Peiyou --min_seq_len=15 --split_mode=1 --time_info=0
 ```
 
 ### Parameter Explanation:
